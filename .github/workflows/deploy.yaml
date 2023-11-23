@@ -55,7 +55,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Zip Lambda functions
         run: |
-          lambda=$(basename ${{ matrix.full_path }}) | awk -F\. '{print $1}'
+          lambda=$(basename ${{ matrix.full_path }} | awk -F\. '{print $1}')
           lambda_zip=$(echo $lambda).zip
           echo $lambda $lambda_zip
           zip -j $lambda_zip ${{matrix.full_path}}
