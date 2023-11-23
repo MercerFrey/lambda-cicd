@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v3
       - id: getLambdas
         run: |
-          lambdas=$(find . -type f -not -path '*/.*')
+          lambdas=$(find . -type f -path '*.py' -not -path '*/.*')
           echo ::set-output name=lambdas::${lambdas}
   AssumeRoleAndCallIdentity:
     runs-on: ubuntu-latest
@@ -41,6 +41,6 @@ jobs:
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
       - name: Zip Lambda functions
-        run: zip -j ${{matrix.lambda}}.zip ./${{matrix.lambda}}/index.js
+        run: zip -j $(basename ${{matrix.lambda}}).zip ${{matrix.lambda}}
       - name: Update Lambdas code
-        run: aws lambda update-function-code --function-name=${{matrix.lambda}} --zip-
+        run: aws lambda update-function-code --function-name=$(basename ${{matrix.lambda}}) --zip-
