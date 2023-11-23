@@ -42,6 +42,8 @@ jobs:
         run: echo "Setting up environment variable"
         env:
           lambda: $(basename ${{ matrix.full_path }} .py)
+      - name: Lambda Function Name
+        run: echo ${{ env.lambda }}
       - name: Git clone the repository
         uses: actions/checkout@v3
       - name: configure aws credentials
@@ -50,8 +52,6 @@ jobs:
           role-to-assume: arn:aws:iam::331586126609:role/github-workflow #change to reflect your IAM role’s ARN
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
-      - name: Lambda Function Name
-        run: echo $env.lambda
       - name: Zip Lambda functions
         run: |
           lambda_zip=$(env.lambda).zip
