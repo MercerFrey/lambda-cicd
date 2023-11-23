@@ -16,7 +16,19 @@ env:
 permissions:
       id-token: write   # This is required for requesting the JWT
       contents: read    # This is required for actions/checkout
+
+      
 jobs:
+  GetFileNames:
+    runs-on: ubuntu-latest
+    outputs:
+      lambdaArray: ${{ steps.getLambdas.outputs.lambdas }}
+    steps:
+      - uses: actions/checkout@v3
+      - id: getLambdas
+        run: |
+          lambdas=$(find . -type f -not -path '*/.*')
+          echo ::set-output name=lambdas::${lambdas}
   AssumeRoleAndCallIdentity:
     runs-on: ubuntu-latest
     steps:
@@ -28,12 +40,7 @@ jobs:
           role-to-assume: arn:aws:iam::331586126609:role/github-workflow #change to reflect your IAM role’s ARN
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
-      # Hello from AWS: WhoAmI
-      - name: Sts GetCallerIdentity
-        run: |
-          aws sts get-caller-identity
-      - name: Update Lambda
-        run: |
-          zip -j lambda1.zip ./transkriptor/lambda1.py 
-          aws lambda update-function-code --function-name=lambda1 --zip-file=fileb://lambda1.zip
-
+      - name: Zip Lambda functions
+        run: zip -j ${{matrix.lambda}}.zip ./${{matrix.lambda}}/index.js
+      - name: Update Lambdas code
+        run: aws lambda update-function-code --function-name=${{matrix.lambda}} --zip-
