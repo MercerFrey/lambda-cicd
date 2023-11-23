@@ -35,7 +35,7 @@ jobs:
     needs: GetFileNames
     strategy:
       matrix:
-        full_path: ${{ needs.GetFileNames.outputs.lambdaArray }}
+        full_path: ${{ fromJson(needs.GetFileNames.outputs.lambdaArray) }}
     runs-on: ubuntu-latest
     steps:
       - name: debug
