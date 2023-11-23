@@ -40,7 +40,6 @@ jobs:
         run: |
           new_lambda=$(basename ./speaktor/lambda2.py | awk -F\. '{print $1}')
           echo "new_lambda=$new_lambda" >> $GITHUB_ENV
-          echo "new_lambda-> $new_lambda" 
       - name: Git clone the repository
         uses: actions/checkout@v3
       - name: configure aws credentials
@@ -51,9 +50,6 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Zip Lambda functions
         run: |
-          echo "new labmda: $new_lambda"
-          lambda=$(basename ${{ matrix.full_path }} | awk -F\. '{print $1}')
-          lambda_zip=$(echo $lambda).zip
-          echo $lambda $lambda_zip
+          lambda_zip=$(echo $new_lambda).zip
           zip -j $lambda_zip ${{matrix.full_path}}
-          aws lambda update-function-code --function-name=$lambda --zip-file=fileb://$lambda_zip
+          aws lambda update-function-code --function-name=$new_lambda --zip-file=fileb://$lambda_zip
