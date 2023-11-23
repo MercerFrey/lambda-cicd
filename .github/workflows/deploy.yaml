@@ -30,7 +30,7 @@ jobs:
           mapfile -t lambdas < <(find . -type f -name '*.py' -not -path '*/.*')
           echo $lambdas
           
-          echo "lambdas={lambdas}" >> $GITHUB_OUTPUT
+          echo "lambdas=${lambdas}" >> $GITHUB_OUTPUT
   UpdateLambdas:
     needs: GetFileNames
     strategy:
