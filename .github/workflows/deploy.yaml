@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: debug
         run: |
-          echo "new_lambda=$(echo $(basename ${{ matrix.full_path }} | awk -F\. '{print $1}') >> $GITHUB_ENV
+          echo "new_lambda=$(echo $(basename ${{ matrix.full_path }} | awk -F\. '{print $1}')" >> $GITHUB_ENV
           echo "new_lambda-> $new_lambda" 
       - name: Git clone the repository
         uses: actions/checkout@v3
