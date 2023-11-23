@@ -35,12 +35,13 @@ jobs:
     needs: GetFileNames
     strategy:
       matrix:
-        lambda: $(basename ${{fromJson(needs.GetFileNames.outputs.lambdaArray)}} .py)
         full_path: ${{fromJson(needs.GetFileNames.outputs.lambdaArray)}}
     runs-on: ubuntu-latest
     steps:
       - name: debug
-        run: echo ${{matrix.full_path}} ${{matrix.lambda}}
+        run: echo "Setting up environment variable"
+        env:
+          lambda: $(basename ${{ matrix.full_path }} .py)
       - name: Git clone the repository
         uses: actions/checkout@v3
       - name: configure aws credentials
@@ -50,8 +51,8 @@ jobs:
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
       - name: Lambda Function Name
-        run: echo ${{matrix.lambda}}
+        run: echo $env.lambda
       - name: Zip Lambda functions
-        run: zip -j ${{matrix.lambda}}.zip ${{matrix.full_path}}
+        run: zip -j $(env.lambda).zip ${{matrix.full_path}}
       - name: Update Lambdas code
-        run: aws lambda update-function-code --function-name=${{matrix.lambda}} --zip-file=fileb://${{matrix.lambda}}.zip
+        run: aws lambda update-function-code --function-name=$env.lambda --zip-file=fileb://$env.lambda.zip
