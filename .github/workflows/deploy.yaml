@@ -35,11 +35,11 @@ jobs:
       matrix:
         full_path: ${{ fromJson(needs.GetFileNames.outputs.lambdaArray) }}
     runs-on: ubuntu-latest
-    env:
-      new_lambda: $(basename ${{ matrix.full_path }} | awk -F\. '{print $1}')
     steps:
       - name: debug
-        run: echo "new_lambda-> $new_lambda" 
+        run: |
+          echo new_lambda=$(echo $(basename ${{ matrix.full_path }} | awk -F\. '{print $1}') >> $GITHUB_ENV
+          echo "new_lambda-> $new_lambda" 
       - name: Git clone the repository
         uses: actions/checkout@v3
       - name: configure aws credentials
@@ -50,6 +50,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Zip Lambda functions
         run: |
+          echo "new labmda: $new_lambda"
           lambda=$(basename ${{ matrix.full_path }} | awk -F\. '{print $1}')
           lambda_zip=$(echo $lambda).zip
           echo $lambda $lambda_zip
