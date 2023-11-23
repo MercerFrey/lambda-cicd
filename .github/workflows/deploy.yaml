@@ -29,7 +29,6 @@ jobs:
         run: |
           lambdas=$(python3 ./scripts/lambda_finder.py)
           echo $lambdas
-          
           echo "lambdas=${lambdas}" >> $GITHUB_OUTPUT
   UpdateLambdas:
     needs: GetFileNames
@@ -40,7 +39,7 @@ jobs:
     steps:
       - name: debug
         run: |
-          echo "Setting up environment variable"
+          echo "Setting up environment variable: " env.lambda
           lambda=$(basename "${{ matrix.full_path }}" | awk -F\. '{print $1}')
       - name: Lambda Function Name
         run: |
@@ -56,7 +55,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Zip Lambda functions
         run: |
-          lambda_zip=$(env.lambda).zip
+          lambda=$(basename ${{ matrix.full_path }}) | awk -F\. '{print $1}'
+          lambda_zip=$(echo $lambda).zip
           zip -j $lambda_zip ${{matrix.full_path}}
-      - name: Update Lambdas code
-        run: aws lambda update-function-code --function-name=$env.lambda --zip-file=fileb://$env.lambda.zip
+          aws lambda update-function-code --function-name=$lambda --zip-file=fileb://$lambda_zip
