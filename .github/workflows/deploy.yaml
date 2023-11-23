@@ -28,12 +28,13 @@ jobs:
       - id: getLambdas
         run: |
           lambdas=$(find . -type f -path '*.py' -not -path '*/.*')
+          echo $lambdas
           echo ::set-output name=lambdas::${lambdas}
   UpdateLambdas:
     needs: GetFileNames
     strategy:
       matrix:
-        lambda: ${{ fromJSON(needs.GetFileNames.outputs.lambdaArray) }}
+        lambda: ${{ needs.GetFileNames.outputs.lambdaArray }}
     runs-on: ubuntu-latest
     steps:
       - name: Git clone the repository
@@ -44,6 +45,8 @@ jobs:
           role-to-assume: arn:aws:iam::331586126609:role/github-workflow #change to reflect your IAM role’s ARN
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
+      - name: Lambda Function Name
+        run: echo ${{matrix.lambda}}
       - name: Zip Lambda functions
         run: zip -j $(basename ${{matrix.lambda}}).zip ${{matrix.lambda}}
       - name: Update Lambdas code
