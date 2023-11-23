@@ -39,12 +39,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: debug
-        run: echo "Setting up environment variable"
-        env:
-          lambda: $(basename "${{ matrix.full_path }}" | awk -F\. '{print $1})'
+        run: |
+          echo "Setting up environment variable"
+          lambda=$(basename "${{ matrix.full_path }}" | awk -F\. '{print $1})'
       - name: Lambda Function Name
         run: |
-          echo lambda: ${{ env.lambda }}
+          echo lambda: $lambda
           echo fullpath: ${{ matrix.full_path }}
       - name: Git clone the repository
         uses: actions/checkout@v3
