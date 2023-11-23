@@ -17,6 +17,6 @@ def find_files(path):
         if os.path.isfile(full_path) and full_path.endswith(".py"):
             lambdas.append(full_path)
         elif os.path.isdir(full_path):
-            if find_files(full_path): lambdas.append(find_files(full_path)) 
+            if find_files(full_path): lambdas.extend(find_files(full_path)) 
     return lambdas
 print(find_files("."))
