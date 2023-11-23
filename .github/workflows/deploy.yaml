@@ -39,7 +39,7 @@ jobs:
       new_lambda: $(basename ${{ matrix.full_path }} | awk -F\. '{print $1}')
     steps:
       - name: debug
-        run: echo "new_lambda:" {{ env.new_lambda }}
+        run: echo "new_lambda: $new_lambda" 
       - name: Git clone the repository
         uses: actions/checkout@v3
       - name: configure aws credentials
