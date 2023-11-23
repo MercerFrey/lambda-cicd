@@ -35,7 +35,7 @@ jobs:
     needs: GetFileNames
     strategy:
       matrix:
-        lambda: ${{ needs.GetFileNames.outputs.lambdaArray }}
+        lambda: ${{fromJson(needs.GetFileNames.outputs.lambdaArray)}}
     runs-on: ubuntu-latest
     steps:
       - name: Git clone the repository
