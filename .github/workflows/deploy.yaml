@@ -29,7 +29,11 @@ jobs:
         run: |
           lambdas=$(find . -type f -path '*.py' -not -path '*/.*')
           echo ::set-output name=lambdas::${lambdas}
-  AssumeRoleAndCallIdentity:
+  UpdateLambdas:
+    needs: GetFileNames
+    strategy:
+      matrix:
+        lambda: ${{ fromJSON(needs.GetFileNames.outputs.lambdaArray) }}
     runs-on: ubuntu-latest
     steps:
       - name: Git clone the repository
