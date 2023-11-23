@@ -35,9 +35,12 @@ jobs:
     needs: GetFileNames
     strategy:
       matrix:
-        lambda: ${{fromJson(needs.GetFileNames.outputs.lambdaArray)}}
+        lambda: $(basename ${{fromJson(needs.GetFileNames.outputs.lambdaArray)}} .py)
+        full_path: ${{fromJson(needs.GetFileNames.outputs.lambdaArray)}}
     runs-on: ubuntu-latest
     steps:
+      - name: debug
+        run: echo ${{matrix.full_path}} ${{matrix.lambda}}
       - name: Git clone the repository
         uses: actions/checkout@v3
       - name: configure aws credentials
@@ -49,6 +52,6 @@ jobs:
       - name: Lambda Function Name
         run: echo ${{matrix.lambda}}
       - name: Zip Lambda functions
-        run: zip -j $(basename ${{matrix.lambda}}).zip ${{matrix.lambda}}
+        run: zip -j ${{matrix.lambda}}.zip ${{matrix.full_path}}
       - name: Update Lambdas code
-        run: aws lambda update-function-code --function-name=$(basename ${{matrix.lambda}}) --zip-
+        run: aws lambda update-function-code --function-name=${{matrix.lambda}} --zip-file=fileb://${{matrix.lambda}}.zip
